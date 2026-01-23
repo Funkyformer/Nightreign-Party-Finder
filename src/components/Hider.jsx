@@ -1,11 +1,12 @@
 import { useState } from 'react';
+import styles from './CSS Modules/Hider.module.css';
 
 
 function Hider(props) {
-    const [hidden, setHidden] = useState(true);
+    const [hidden, setHidden] = useState(false);
 
     return (
-        <div className = 'hider'>
+        <div className = {styles.hider}>
             <div hidden = {hidden}>
                 {props.children}
             </div>
