@@ -24,7 +24,8 @@ public class MainController {
     public MainController(ListingRepository repository) {
         this.repository = repository;
     }
-
+    
+    @CrossOrigin(origins = {"${settings.cors_origin}"})
     @PostMapping("/add")
     public Listing createListing(@Valid @RequestBody Listing listing) {
         // System.out.println(listing.toString());

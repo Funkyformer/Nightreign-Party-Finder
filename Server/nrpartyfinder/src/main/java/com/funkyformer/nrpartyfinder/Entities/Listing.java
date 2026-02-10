@@ -22,10 +22,14 @@ public class Listing {
     @Column(length=20)
     @NotNull
     private String targets;
-
+    
     @Column
     @NotNull
     private Boolean requireDLC;
+
+    @Column
+    @NotNull
+    private String platform;
 
     @Column
     @NotNull
@@ -148,6 +152,15 @@ public class Listing {
 
     public void setChar03(String char03) {
         this.char03 = char03;
+    }
+
+    public String getPlatform() {
+        return platform;
+    }
+
+
+    public void setPlatform(String platform) {
+        this.platform = platform;
     }
 
 }

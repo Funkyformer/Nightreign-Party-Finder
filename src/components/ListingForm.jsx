@@ -1,11 +1,14 @@
+import axios from 'axios';
 import { useState } from 'react';
 import Hider from './Hider';
-import bossList from './bosses.json'
+import bossList from './json files/bosses.json'
 import styles from './CSS Modules/ListingForm.module.css'
 import Player from './Player';
+import encodeList from './encodeList';
+import playerList from './json files/nightfarers.json'
 
 function ListingForm() {
-    
+    const nightfarers = Object.fromEntries(playerList.nightfarers.map(char => [`char${char.id}`,false]));
     const bosses = bossList.bosses;
     const regBosses = bosses.map(boss => [`reg${boss.id}`, false]);
     const darkBosses = bosses.map(boss => {
@@ -15,7 +18,7 @@ function ListingForm() {
         .filter(function(element) {
             return element !== undefined;
         });
-    const allBosses = Object.fromEntries([...regBosses, ...darkBosses]);
+        const allBosses = Object.fromEntries([...regBosses, ...darkBosses]);
 
     const [inputs, setInputs] = useState({
         targets: {...allBosses},
@@ -25,8 +28,9 @@ function ListingForm() {
         description: '',
         instructions: '',
         numCheck: 0,
-        character1:'Wylder',
-        character2:'',
+        character1:{...nightfarers},
+        character2:null,
+        character3:null,
         depth: false,
         numElems: Object.keys(allBosses).length
     });
@@ -34,9 +38,10 @@ function ListingForm() {
     const [coop, setCoop] = useState(false);
 
     const handleCheck = (e) => {
+        const group = e.target.dataset.group;
         const name = e.target.name;
         const value = e.target.checked;
-        setInputs(values => ({...values, targets: {...values.targets, [name]: value}, numCheck: value ? values.numCheck + 1: values.numCheck - 1}))
+        setInputs(values => ({...values, [group]: {...values[group], [name]: value}, numCheck: group == 'targets'? (value ? values.numCheck + 1: values.numCheck - 1) : inputs.numCheck}) )
     }
     const handleOther = (e) => {
         const target = e.target;
@@ -63,15 +68,24 @@ function ListingForm() {
     }
     const toggleCoop = () => {
         setCoop(!coop);
-        setInputs(values => ({...values, character2: coop ? '' : 'Wylder'}))
+        setInputs(values => ({...values, character2: !coop? {...nightfarers} : null}))
     }
     const logit = () => {
         console.log(inputs);
         // console.log(coop);
     }
+    
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const payload = encodeList(inputs, bosses.length)
+        console.log(payload)
+        axios.post('/add', payload)
+        .then((response) => console.log(response))
+        .catch((e) => console.log(e));
+    }
 
     return (
-        <form >
+        <form onSubmit={handleSubmit}>
             <input type='button' onClick = {logit} value='print inputs' />
             <label>Choose your Platform:</label>
             <select name="platform" onChange = {handleOther}>
@@ -87,7 +101,7 @@ function ListingForm() {
                     {bosses.map(boss =>
                         <li key={'reg'+boss.id}>
                             <label>
-                                <input type='checkbox' name={`reg${boss.id}`} checked={inputs.targets[`reg${boss.id}`]} onChange = {handleCheck} />
+                                <input type='checkbox' name={`reg${boss.id}`} data-group='targets' checked={inputs.targets[`reg${boss.id}`]} onChange = {handleCheck} />
                                 {` ${boss.name}`}
                             </label>
                         </li>
@@ -99,7 +113,7 @@ function ListingForm() {
                         {if(boss.dark == true) {
                             return <li key={'dark'+boss.id}>
                                 <label>
-                                    <input type='checkbox' name={`dark${boss.id}`} checked={inputs.targets[`dark${boss.id}`]} onChange = {handleCheck} />
+                                    <input type='checkbox' name={`dark${boss.id}`} data-group='targets' checked={inputs.targets[`dark${boss.id}`]} onChange = {handleCheck} />
                                     {` Everdark ${boss.name}`}
                                 </label>
                             </li>
@@ -119,9 +133,9 @@ function ListingForm() {
             <label>Join Instructions (only visible after accepting someone)</label>
             <textarea name = 'instructions' rows = '5' cols = '75' onChange = {handleOther}/> <br />
 
-            <Player number='1' onChange={handleOther} />
+            <Player number='1' onChange = {handleCheck} group = 'character1' checked = {inputs.character1}/>
             { coop ? 
-                <Player number='2' onChange = {handleOther}>
+                <Player number='2' onChange = {handleCheck} group = 'character2' checked = {inputs.character2}>
                     <input type='button' value='Remove second party member' onClick = {toggleCoop}/>
                  </Player> :
                 <input type='button' value = 'Add a second party member' onClick = {toggleCoop}/>

@@ -1,17 +1,21 @@
-import playerList from './nightfarers.json'
+import playerList from './json files/nightfarers.json'
 
 function Player(props) {
     const nightfarers = playerList.nightfarers;
 
     return (
         <div>
-            <label>Select a Character: 
-                <select name = {`character${props.number}`} onChange = {props.onChange}>
-                    {nightfarers.map(char => 
-                        <option key = {`char${props.number}${char.name}`} value={char.name}>{char.name}</option>
-                    )}
-                </select>
-            </label>
+            <ul >
+                {nightfarers.map(char =>
+                    <li key={'char'+char.id}>
+                        <label>
+                            <input type='checkbox' name={`char${char.id}`} data-group={props.group} checked={props.checked[`char${char.id}`]} onChange = {props.onChange} />
+                            {` ${char.name}`}
+                        </label>
+                    </li>
+                )}
+            </ul>
+
             {props.children}
         </div>
     )

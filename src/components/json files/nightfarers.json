@@ -1,0 +1,14 @@
+{
+    "nightfarers":[
+        {"id": 0,"name": "Wylder"},
+        {"id": 1,"name": "Guardian"},
+        {"id": 2,"name": "Ironeye"},
+        {"id": 3,"name": "Duchess"},
+        {"id": 4,"name": "Raider"},
+        {"id": 5,"name": "Revenant"},
+        {"id": 6,"name": "Recluse"},
+        {"id": 7,"name": "Executor"},
+        {"id": 8,"name": "Scholar"},
+        {"id": 9,"name": "Undertaker"}
+    ]
+}
