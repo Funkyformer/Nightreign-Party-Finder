@@ -50,7 +50,13 @@ function ListingForm() {
         setInputs(values => ({...values, [name]: value}));
     }
     const toggleDepth = () => {
-        setInputs(values => ({...values, depth: !values.depth}));
+        if (inputs.depth) {
+            setInputs(values => ({...values, depth:false, targets: {...allBosses}}));
+        }
+        else {
+            setInputs(values => ({...values, depth:true, targets: 1, numCheck: 0}));
+        }
+        // setInputs(values => ({...values, depth: !values.depth}));
     }
     const toggleChecks = () => {
         let boolean;
@@ -94,33 +100,38 @@ function ListingForm() {
                 <option value={2}>Playstation</option>
             </select> <br/>
             <input type='button' onClick = {toggleDepth} value={inputs.depth ? 'Return to individual bosses' : 'Switch to Depth of Night'} />
-            { inputs.depth? <h1>DEPTH OF NIGHT ACTIVE</h1> :
-            <Hider className = {styles.hider}>
-                <input type='button' value='Toggle All Targets' onClick = {toggleChecks} /> <br />
-                <ul className = {styles.bosses}>
-                    {bosses.map(boss =>
-                        <li key={'reg'+boss.id}>
-                            <label>
-                                <input type='checkbox' name={`reg${boss.id}`} data-group='targets' checked={inputs.targets[`reg${boss.id}`]} onChange = {handleCheck} />
-                                {` ${boss.name}`}
-                            </label>
-                        </li>
-                    )}
-                </ul>
-                
-                <ul className = {styles.bosses}>
-                    {bosses.map(boss =>
-                        {if(boss.dark == true) {
-                            return <li key={'dark'+boss.id}>
+            { inputs.depth ? 
+                <div>
+                    <h1>DEPTH OF NIGHT ACTIVE</h1>
+                    <input type='range' name='targets' min='1' max='5' value={inputs.targets} onChange={handleOther}/>
+                    <label>Depth {inputs.targets}</label>
+                </div> :
+                <Hider className = {styles.hider}>
+                    <input type='button' value='Toggle All Targets' onClick = {toggleChecks} /> <br />
+                    <ul className = {styles.bosses}>
+                        {bosses.map(boss =>
+                            <li key={'reg'+boss.id}>
                                 <label>
-                                    <input type='checkbox' name={`dark${boss.id}`} data-group='targets' checked={inputs.targets[`dark${boss.id}`]} onChange = {handleCheck} />
-                                    {` Everdark ${boss.name}`}
+                                    <input type='checkbox' name={`reg${boss.id}`} data-group='targets' checked={inputs.targets[`reg${boss.id}`]} onChange = {handleCheck} />
+                                    {` ${boss.name}`}
                                 </label>
                             </li>
-                        }}
-                    )}
-                </ul>
-            </Hider> 
+                        )}
+                    </ul>
+                    
+                    <ul className = {styles.bosses}>
+                        {bosses.map(boss =>
+                            {if(boss.dark == true) {
+                                return <li key={'dark'+boss.id}>
+                                    <label>
+                                        <input type='checkbox' name={`dark${boss.id}`} data-group='targets' checked={inputs.targets[`dark${boss.id}`]} onChange = {handleCheck} />
+                                        {` Everdark ${boss.name}`}
+                                    </label>
+                                </li>
+                            }}
+                        )}
+                    </ul>
+                </Hider> 
             }
             <label>Username</label>
             <input type='text' name = 'username' onChange = {handleOther} required/> 

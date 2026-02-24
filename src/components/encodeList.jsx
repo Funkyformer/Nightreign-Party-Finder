@@ -22,7 +22,7 @@ function encodeList(props, length) {
     }
 
     return {
-        targets: props.depth? 1 : procBosses(props.targets),
+        targets: props.depth? props.targets : procBosses(props.targets),
         char01: procChars(props.character1),
         char02: procChars(props.character2),
         char03: null,
