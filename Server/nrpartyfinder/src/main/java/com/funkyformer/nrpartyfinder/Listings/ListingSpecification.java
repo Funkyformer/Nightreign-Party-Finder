@@ -1,7 +1,5 @@
 package com.funkyformer.nrpartyfinder.Listings;
 
-import java.util.ArrayList;
-
 import org.springframework.data.jpa.domain.Specification;
 
 public class ListingSpecification {
