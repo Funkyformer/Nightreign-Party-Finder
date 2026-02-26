@@ -37,25 +37,25 @@ public class MainController {
     
     @GetMapping("/listings")
     public List<Listing> getAllEmployees(
-        @RequestParam(required=false) Integer platform,
-        @RequestParam(required=false) Boolean requiredlc,
-        @RequestParam(required=false) Boolean duoQueue,
+        @RequestParam(required=false) Integer plat,
+        @RequestParam(required=false) Boolean dlc,
+        @RequestParam(required=false) Boolean duo,
         @RequestParam(required=false) String wl,
         @RequestParam(required=false) String bl,
         @RequestParam(required=false) String depth) {
 
         Specification<Listing> spec = Specification.unrestricted();
 
-        if (platform != null) {
-            spec = spec.and(ListingSpecification.isPlat(platform));
+        if (plat != null) {
+            spec = spec.and(ListingSpecification.isPlat(plat));
         }
 
-        if (requiredlc != null && requiredlc) {
-            spec = spec.and(ListingSpecification.reqDLC(requiredlc));
+        if (dlc != null && dlc) {
+            spec = spec.and(ListingSpecification.reqDLC(dlc));
         }
 
-        if (duoQueue != null && duoQueue) {
-            spec = spec.and(ListingSpecification.reqSlots(duoQueue));
+        if (duo != null && duo) {
+            spec = spec.and(ListingSpecification.reqSlots(duo));
         }
 
         if (bl != null) {

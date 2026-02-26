@@ -1,0 +1,39 @@
+.container {
+    display:grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: 5fr 2fr;
+    height: 600px;
+    width: 80%;
+    margin: auto;
+}
+.halfHolder {
+    border-width: 4px 4px 4px 0px;
+    border-style:solid;
+    grid-column: span 3;
+}
+.thirdHolder {
+    border-width: 0px 4px 4px 0px;
+    border-style: solid;
+    grid-column: span 2;
+}
+.subHolder {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-content: space-between;
+    justify-content: center;
+    height: 100%;
+}
+.bossField {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    margin: 10px 0px;
+    align-items: center;
+}
+.bossField img {
+    margin: auto;
+    width: 80px;
+    height: 80px;
+}
+.left {
+    border-left-width: 4px;
+}

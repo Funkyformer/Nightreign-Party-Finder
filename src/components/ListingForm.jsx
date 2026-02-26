@@ -18,7 +18,7 @@ function ListingForm() {
         .filter(function(element) {
             return element !== undefined;
         });
-        const allBosses = Object.fromEntries([...regBosses, ...darkBosses]);
+    const allBosses = Object.fromEntries([...regBosses, ...darkBosses]);
 
     const [inputs, setInputs] = useState({
         targets: {...allBosses},
