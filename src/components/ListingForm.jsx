@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useState } from 'react';
-import Hider from './Hider';
+import {Tooltip} from 'react-tooltip';
 import bossList from './json files/bosses.json'
 import styles from './CSS Modules/ListingForm.module.css'
 import Player from './PlayerField';
@@ -37,11 +37,16 @@ function ListingForm() {
 
     const [coop, setCoop] = useState(false);
 
-    const handleCheck = (e) => {
-        const group = e.target.dataset.group;
+    const handleBoss = (e) => {
         const name = e.target.name;
-        const value = e.target.checked;
-        setInputs(values => ({...values, [group]: {...values[group], [name]: value}, numCheck: group == 'targets'? (value ? values.numCheck + 1: values.numCheck - 1) : inputs.numCheck}) )
+        const val = !inputs.targets[name];
+        setInputs(values => ({...values, targets: {...values.targets, [name]: val}, numCheck: val ? inputs.numCheck + 1 : inputs.numCheck - 1 }) )
+    }
+    const handlePlayer = (e) => {
+        const name = e.target.name;
+        const group = e.target.getAttribute("group");
+        const val = !inputs[group][name];
+        setInputs(values => ({...values, [group]: {...values[group], [name]: val}}))
     }
     const handleOther = (e) => {
         const target = e.target;
@@ -56,7 +61,6 @@ function ListingForm() {
         else {
             setInputs(values => ({...values, depth:true, targets: 1, numCheck: 0}));
         }
-        // setInputs(values => ({...values, depth: !values.depth}));
     }
     const toggleChecks = () => {
         let boolean;
@@ -91,67 +95,77 @@ function ListingForm() {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <input type='button' onClick = {logit} value='print inputs' />
-            <label>Choose your Platform:</label>
-            <select name="platform" onChange = {handleOther}>
-                <option value={0}>Steam</option>
-                <option value={1}>Xbox</option>
-                <option value={2}>Playstation</option>
-            </select> <br/>
-            <input type='button' onClick = {toggleDepth} value={inputs.depth ? 'Return to individual bosses' : 'Switch to Depth of Night'} />
-            { inputs.depth ? 
+        <form onSubmit={handleSubmit} className={styles.container}>
+            <div className={`${styles.halfHolder} ${styles.cell} ${styles.cellLeft}`}>
+                <input type='button' onClick = {toggleDepth} value={inputs.depth ? 'Return to individual bosses' : 'Switch to Depth of Night'} />
+                { inputs.depth ? 
+                    <div>
+                        <h1>DEPTH OF NIGHT ACTIVE</h1>
+                        <input type='range' name='targets' min='1' max='5' value={inputs.targets} onChange={handleOther}/>
+                        <label>Depth {inputs.targets}</label>
+                    </div> :
+                    <div>
+                        <input type='button' value='Toggle All Targets' onClick = {toggleChecks} />
+                        <div className = {styles.bossGrid}>
+                            { bosses.map(boss => 
+                                <img name={`reg${boss.id}`} src = {inputs.targets[`reg${boss.id}`] ? `/images/bosses/reg${boss.id}.webp` :
+                                `/images/bosses/down/reg${boss.id}.webp`} alt={boss.title} data-tooltip-id='tooltip' style={inputs.targets[`reg${boss.id}`] ? {} : {opacity: 0.6}}
+                                data-tooltip-content={`${boss.title}`} key={`reg${boss.id}`} onClick = {handleBoss}/>
+                            ) }
+                        </div>
+                        <div className = {styles.bossGrid}>
+                            { bosses.map(boss => boss.dark ?
+                                <img name={`dark${boss.id}`} src = {inputs.targets[`dark${boss.id}`] ? `/images/bosses/dark${boss.id}.webp` :
+                                `/images/bosses/down/dark${boss.id}.webp`} alt={boss.title} data-tooltip-id='tooltip' style={inputs.targets[`dark${boss.id}`] ? {} : {opacity: 0.6}}
+                                data-tooltip-content={`${boss.title}`} key={`dark${boss.id}`} onClick = {handleBoss}/> :  <br key={`dark${boss.id}`}/>
+                            ) }
+                        </div>
+                    </div> }
+            </div>
+            <div className={`${styles.halfHolder} ${styles.duoGrid}`}>
+                <div className={styles.cell}>
+                    <Player onClick = {handlePlayer} group = 'character1' className = {styles.bossGrid} inputs={inputs.character1}/>
+                </div>
+                <div className={styles.cell}>
+                { coop ?  
+                    <div>
+                        <Player onClick = {handlePlayer} group = 'character2' className = {styles.bossGrid} inputs={inputs.character2}/>
+                        <input type='button' value = 'Remove Party Member' onClick = {toggleCoop}/>
+                    </div>:
+                    <input type='button' value = 'Add a second party member' onClick = {toggleCoop}/>
+                }</div>
+            </div>
+            <div className={`${styles.cell} ${styles.cellLeft}`}>
                 <div>
-                    <h1>DEPTH OF NIGHT ACTIVE</h1>
-                    <input type='range' name='targets' min='1' max='5' value={inputs.targets} onChange={handleOther}/>
-                    <label>Depth {inputs.targets}</label>
-                </div> :
-                <Hider className = {styles.hider}>
-                    <input type='button' value='Toggle All Targets' onClick = {toggleChecks} /> <br />
-                    <ul className = {styles.bosses}>
-                        {bosses.map(boss =>
-                            <li key={'reg'+boss.id}>
-                                <label>
-                                    <input type='checkbox' name={`reg${boss.id}`} data-group='targets' checked={inputs.targets[`reg${boss.id}`]} onChange = {handleCheck} />
-                                    {` ${boss.name}`}
-                                </label>
-                            </li>
-                        )}
-                    </ul>
-                    
-                    <ul className = {styles.bosses}>
-                        {bosses.map(boss =>
-                            {if(boss.dark == true) {
-                                return <li key={'dark'+boss.id}>
-                                    <label>
-                                        <input type='checkbox' name={`dark${boss.id}`} data-group='targets' checked={inputs.targets[`dark${boss.id}`]} onChange = {handleCheck} />
-                                        {` Everdark ${boss.name}`}
-                                    </label>
-                                </li>
-                            }}
-                        )}
-                    </ul>
-                </Hider> 
-            }
-            <label>Username</label>
-            <input type='text' name = 'username' onChange = {handleOther} required/> 
-            <label>
-                <input type='checkbox' name='dlc' checked={inputs.dlc} onChange = {handleOther} />
-                Require DLC?
-            </label><br />
-            <label>Description</label>
-            <textarea name = 'description' rows = '5' cols = '75' onChange = {handleOther}/> <br />
-            <label>Join Instructions (only visible after accepting someone)</label>
-            <textarea name = 'instructions' rows = '5' cols = '75' onChange = {handleOther}/> <br />
-
-            <Player number='1' onChange = {handleCheck} group = 'character1' checked = {inputs.character1}/>
-            { coop ? 
-                <Player number='2' onChange = {handleCheck} group = 'character2' checked = {inputs.character2}>
-                    <input type='button' value='Remove second party member' onClick = {toggleCoop}/>
-                 </Player> :
-                <input type='button' value = 'Add a second party member' onClick = {toggleCoop}/>
-            }
-            <input type='submit' value='Create listing' />
+                    <label>Platform</label>
+                    <select name="platform" onChange = {handleOther}>
+                        <option value={0}>Steam</option>
+                        <option value={1}>Xbox</option>
+                        <option value={2}>Playstation</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Username</label>
+                    <input type='text' name = 'username' onChange = {handleOther} required/>
+                </div>
+                <div>
+                    <input type='checkbox' name='dlc' checked={inputs.dlc} onChange = {handleOther} />
+                    <label>Require DLC?</label>
+                </div>
+                <input type='button' onClick = {logit} value='print inputs' />
+            </div>
+            <div className={`${styles.thirdHolder} ${styles.cell}`}>
+                <label>Description</label>
+                <textarea name = 'description' className={styles.textarea} onChange = {handleOther}/>
+            </div>
+            <div className={`${styles.thirdHolder} ${styles.cell}`}>
+                <label>Join Instructions (only visible after accepting someone)</label>
+                <textarea name = 'instructions' className={styles.textarea} onChange = {handleOther}/>
+            </div>
+            <div className={styles.cell}>
+                <input type='submit' value='Create listing' />
+            </div>
+            <Tooltip id="tooltip"/>
         </form>
     )
 }

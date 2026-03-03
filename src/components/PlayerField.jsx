@@ -1,24 +1,15 @@
 import playerList from './json files/nightfarers.json'
 
-function PlayerField(props) {
+function PlayerField({onClick, className, inputs, group}) {
     const nightfarers = playerList.nightfarers;
 
     return (
-        <div>
-            <ul >
-                {nightfarers.map(char =>
-                    <li key={'char'+char.id}>
-                        <label>
-                            <input type='checkbox' name={`char${char.id}`} data-group={props.group} checked={props.checked[`char${char.id}`]} onChange = {props.onChange} />
-                            {` ${char.name}`}
-                        </label>
-                    </li>
-                )}
-            </ul>
-
-            {props.children}
-        </div>
-    )
+    <div className = {className}>
+        { nightfarers.map(char =>
+            <img name={`char${char.id}`} group={group} src = {`/images/nightfarers/char${char.id}.webp`} alt={char.id} style={inputs[`char${char.id}`] ? {} : {opacity: 0.6}}
+            key={`${group}-${char.id}`} onClick = {onClick}/>
+        ) }
+    </div>)
 }
 
 export default PlayerField

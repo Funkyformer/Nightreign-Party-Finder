@@ -9,7 +9,7 @@ public class ListingSpecification {
     }
 
     public static Specification<Listing> reqDLC(Boolean requiredlc) {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("requiredlc"), requiredlc);
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("requireDLC"), requiredlc);
     }
 
     public static Specification<Listing> reqSlots(Boolean duoQueue) {

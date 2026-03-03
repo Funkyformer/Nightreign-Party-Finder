@@ -1,11 +1,44 @@
-.bosses {
-    display:inline-block;
-    width:45%;
-    list-style-type:none;
-    margin:0;
-    padding:5px;
-    vertical-align: top;
+.container {
+    border-style: solid;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: 2fr 1fr;
 }
-.hider {
-    
+.halfHolder {
+    grid-column: span 3;
+}
+.duoGrid {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr;
+}
+.thirdHolder {
+    grid-column: span 2;
+    contain: size;
+}
+.textarea {
+    resize: none;
+    width: 80%;
+    height: 80%;
+}
+.bossGrid {
+    display:grid;
+    grid-template-columns: repeat(5, 1fr);
+    justify-content: space-evenly;
+    width:100%;
+    height: 100%;
+}
+.bossGrid img {
+    height: 80px;
+    width: 80px;
+    margin: 2px;
+}
+.cell {
+    border-style: solid;
+    border-bottom: none;
+    margin-right: -3px;
+    margin-top: -3px;
+}
+.cellLeft {
+    border-left: none;
 }
