@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {Tooltip} from 'react-tooltip';
 import bossList from './json files/bosses.json'
 import styles from './CSS Modules/ListingForm.module.css'
@@ -36,6 +37,8 @@ function ListingForm() {
     });
 
     const [coop, setCoop] = useState(false);
+
+    const navigate = useNavigate();
 
     const handleBoss = (e) => {
         const name = e.target.name;
@@ -90,7 +93,10 @@ function ListingForm() {
         const payload = encodeList(inputs, bosses.length)
         // console.log(payload)
         axios.post('/add', payload)
-        .then((response) => console.log(response))
+        .then(function(response) {
+            console.log(response);
+            navigate(`/view/${response.data.listingID}`);
+        })
         .catch((e) => console.log(e));
     }
 

@@ -4,16 +4,10 @@
     min-width:660px;
     margin: 10px;
     height: auto;
-    width: calc(50% - 26px);
     display:grid;
     grid-template-columns: 1fr 3fr 4fr;
     grid-template-rows: 1fr 1fr 1fr;
     border-style:solid;
-}
-@media (max-width: 1718px) {
-    .container {
-        width:100%;
-    }
 }
 .cell {
     height: auto;

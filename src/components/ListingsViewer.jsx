@@ -95,7 +95,7 @@ function ListingsViewer() {
 
     return (
         <div>
-            <Hider>
+            <Hider label='Toggle Filter Display'>
                 <FilterForm onSubmit = {handleSubmit} inputs={inputs} setInputs={setInputs} bosses={bosses} allBosses={allBosses} setQuery={setQuery}/>
             </Hider>
             <div className = {styles.listingsHolder}>
