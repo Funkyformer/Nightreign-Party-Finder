@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import axios from 'axios';
 import Hider from "./components/Hider";
 import decodeList from "./components/decodeList";
-import EditForm from "./components/EditForm";
 import styles from "./CSS Modules/ListingDetails.module.css";
+import Listing from "./components/Listing";
 
 function ListingDetails() {
 
@@ -32,7 +32,7 @@ function ListingDetails() {
         mode == '200' ?
         <div className='content'>
             <Hider label='Toggle Listing Details'>
-                <EditForm data={data} setData={setData} styles={styles}/>
+                <Listing props={data} />
             </Hider>
             <div>
                 pretend chat goes here

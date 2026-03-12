@@ -1,8 +1,12 @@
 package com.funkyformer.nrpartyfinder;
 
 import com.funkyformer.nrpartyfinder.Listings.*;
+import com.funkyformer.nrpartyfinder.Users.User;
+import com.funkyformer.nrpartyfinder.Users.UserRepository;
 
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,23 +27,27 @@ import java.util.UUID;
 @CrossOrigin(origins = {"${settings.cors_origin}","${settings.cors_origin_2}"})
 @RequestMapping("/nrpartyfinder")
 public class MainController {
-    private final ListingRepository repository;
+    private final ListingRepository listRepo;
+    private final UserRepository userRepo;
 
-    public MainController(ListingRepository repository) {
-        this.repository = repository;
+    private PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+
+    public MainController(ListingRepository listRepo, UserRepository userRepo) {
+        this.listRepo = listRepo;
+        this.userRepo = userRepo;
     }
     
     @PostMapping("/add")
     public Listing createListing(@Valid @RequestBody Listing listing) {
         // System.out.println(listing.toString());
-        Listing ret = repository.save(listing);
+        Listing ret = listRepo.save(listing);
         System.out.print(ret.toString());
         return ret;
     }
 
     @GetMapping("/listings/{id}")
     public Listing getListingByID(@PathVariable UUID id) {
-        return repository.findById(id).orElseThrow(() -> new RuntimeException("Listing Not Found"));
+        return listRepo.findById(id).orElseThrow(() -> new RuntimeException("Listing Not Found"));
     }
     
     @GetMapping("/listings")
@@ -85,6 +93,24 @@ public class MainController {
             }
         }
 
-        return repository.findAll(spec);
+        return listRepo.findAll(spec);
     }  
+    
+    @PostMapping("/newuser")
+    public User createUser(@Valid @RequestBody User user) {
+        user.setPassword(encoder.encode(user.getPassword()));
+        User ret = userRepo.save(user);
+        System.out.println(ret.toString());
+        return ret;
+    }
+
+    @PostMapping("/login")
+    public Boolean login(@Valid @RequestBody User user) {
+        String savedPass = userRepo.findById(user.getUsername()).get().getPassword();
+        // String key = savedPass.split("}")[0].substring(1);
+        // user.setPassword(encoder.encode(user.getPassword()));
+        boolean ret = encoder.matches(user.getPassword(), savedPass);
+        System.out.println(ret);
+        return ret;
+    }
 }
